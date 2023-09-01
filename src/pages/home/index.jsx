@@ -7,9 +7,12 @@ import coach from "./img/coaching.png"
 import story from "./img/story.png"
 import clas from "./img/class.png"
 import workshop from "./img/workshop.png"
+import { useNavigate } from "react-router-dom";
 
 
 export default function Home() {
+    const navigate = useNavigate();
+
     return(
         <section className="home">
             <img src={logo} alt="logo sharehub" />
@@ -101,18 +104,12 @@ export default function Home() {
 
                         </p>
                     </div>
-                  
-
-
+           
                 </div>
-
-
+ 
             </div>
 
 
- 
-  
-            
             <div className="b-box">
                         <h1 className="dtitles">
                             Les Rendez-vous
@@ -155,7 +152,11 @@ export default function Home() {
                     Pour participer aux choix de nos thematiques c’est tres simple cliques sur ce bouton.                
                 </p> 
 
-                <button>
+                <button
+                    onClick={()=>{
+                        navigate("/register")
+                    }}
+                >
                     participer
                 </button>   
 

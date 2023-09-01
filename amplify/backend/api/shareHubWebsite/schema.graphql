@@ -1,0 +1,18 @@
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  phoneNumber: String
+}
+
+type Response @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  questionsID: ID! @index(name: "byQuestions")
+  answer: String
+  count: Float
+}
+
+type Questions @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  question: String
+  Responses: [Response] @hasMany(indexName: "byQuestions", fields: ["id"])
+} 
