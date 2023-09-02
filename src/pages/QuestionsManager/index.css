@@ -1,0 +1,46 @@
+.headerquest{
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+
+}
+
+.headerquest h2{
+    font-size: 26px;
+
+}
+.headerquest img{
+    border:none;
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    border-radius: 6px;
+
+}
+
+.Boxvote{
+    width:40%;
+    height: 60px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    border-radius: 5px;
+    margin: 5px;
+    border:1px solid rgb(165, 163, 163);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-left: auto;
+    margin-right: auto;
+
+ }
+
+
+.Boxvote p{
+    font-size: 18px;
+    font-weight: 500;
+
+}

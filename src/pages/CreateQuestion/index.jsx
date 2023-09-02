@@ -1,91 +1,109 @@
-import "./index.css"
-import { useForm, useFieldArray  } from "react-hook-form";
-import { useState} from 'react';
+import React, { useState } from "react";
+import "./index.css";
+import { useForm, useFieldArray } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import logo from "./img/logo.png"
-
+import logo from "./img/logo.png";
+import { createQuestions, createResponse } from "../../graphql/mutations";
+import { API, graphqlOperation } from "aws-amplify";
 
 export default function CreateQuestion() {
-    const [error, setError] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const {formState: {errors}, control,handleSubmit, register} = useForm();
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const {
+    formState: { errors },
+    control,
+    handleSubmit,
+    register,
+  } = useForm();
 
-    const { fields, append } = useFieldArray({
-        control,
-        name: "inputs"
-      });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "inputs",
+  });
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const handlePress = (data)=>{
-        navigate("/form")
-    }
+  const handlePress = async (data) => {
+    setLoading(true);
+    const input = {
+      question: data.question,
+    };
+    const responseQ = await API.graphql(
+      graphqlOperation(createQuestions, {
+        input: input,
+      })
+    );
 
-    return(
-        <section className="createQuestion">
-                <h1 className="dtitle">
-                    create questions    
-                </h1>
+    console.log(responseQ);
+    data.inputs.forEach(async (element) => {
+      const input = {
+        questionsID: responseQ.data.createQuestions.id,
+        answer: element,
+        count: 0,
+      };
 
-                <form                        
-             onSubmit={handleSubmit((data=>{
-                        handlePress(data)
-                    }))}>
-                <h2 className="dtitle">Quelques petites informations</h2>
+      const response = await API.graphql(
+        graphqlOperation(createResponse, {
+          input: input,
+        })
+      );
+      console.log(response);
+    });
 
-                <div className='form-input'>
-                    <input
- 
-                        {...register('questions', { required: 'ceci est obligatoire'})}
-                            type="text"
-                            placeholder="nom et prenom"
-                        />
-                            
-                </div>
-                {errors.nom && <p className="text-error">{errors.nom?.message}</p>}
+    navigate(
+      "/staf-link-special-**dkd*dkdkcmm*-secret-sharehub-secrecyact-cmrsecrecyact-dontshareititsecret"
+    );
+    setLoading(false);
+  };
 
-                <div className='form-input'>
-                    <input
- 
-                        {...register('number', { required: 'ceci est obligatoire'})}
-                            type="number"
-                            placeholder="numero de telephone"
-                        />
-                            
-                </div>
-                {errors.number && <p className="text-error">{errors.number?.message}</p>}
-                
+  return (
+    <section className="createQuestion">
+      <img src={logo} alt="logo sharehub" />
 
+      <form
+        onSubmit={handleSubmit((data) => {
+          handlePress(data);
+        })}
+      >
+        <h2 className="dtitle">create questions</h2>
 
-                {fields.map((field, index) => (
-                    <>
-                        <div className='form-input'>
-                            <input 
-                                key={field.id} 
-                                {...register(`inputs.${index}`)} 
-                                
-                            />
+        <div className="form-input">
+          <input
+            {...register("question", { required: "ceci est obligatoire" })}
+            type="text"
+            placeholder="question posé"
+          />
+        </div>
+        {errors.question && (
+          <p className="text-error">{errors.question?.message}</p>
+        )}
 
-                        </div>
+        {errors.number && <p className="text-error">{errors.number?.message}</p>}
 
-                    </>
+        {fields.map((field, index) => (
+          <div key={field.id} className="add-input">
+            <div className="form-input">
+              <input
+                {...register(`inputs.${index}`)}
+                placeholder="new question"
+              />
+            </div>
+            <button
+              className="remove"
+              type="button"
+              onClick={() => remove(index)}
+            ></button>
+          </div>
+        ))}
 
-                    ))}
-              
-                <button
-                    className="button"
-                    type="submit"
-
-                >continuer</button>
-
-<button  onClick={() => append({})}>
-            Add 
+        <button className="button" type="submit" disabled={loading}>
+          {loading ? "Loading..." : "Continuer"}
         </button>
-            </form>
-        
-   
-        </section>
-    )
 
+        <div className="add" onClick={() => append({})}>
+          <p>add</p>
+        </div>
+      </form>
+    </section>
+  );
 }
-
